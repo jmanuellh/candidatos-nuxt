@@ -58,9 +58,15 @@ export default {
       dialogNuevo: false
     }
   },
+  mounted() {
+    this.getCandidatos()
+  },
   methods: {
     agregarCandidato() {
 
+    },
+    getCandidatos() {
+      console.log(this.$fire)
     }
   }
 }
