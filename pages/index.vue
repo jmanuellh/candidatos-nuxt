@@ -59,14 +59,15 @@ export default {
     }
   },
   mounted() {
-    this.getCandidatos()
+    this.getCandidates()
   },
   methods: {
     agregarCandidato() {
 
     },
-    getCandidatos() {
-      console.log(this.$fire)
+    async getCandidates() {
+      console.log(process.env.API_KEY)
+      // console.log((await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data()))
     }
   }
 }
