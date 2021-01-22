@@ -28,33 +28,68 @@ div
       v-btn(@click="eliminar" color="primary")
 </template>
 
-<script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+<script lang="ts">
+import Vue from 'vue'
 
-export default {
-  components: {
-    Logo,
-    VuetifyLogo
-  },
+interface Candidato {
+  name: string,
+  vacant: string,
+  call_datetime?: string,
+  appointment_datetime?: string,
+  evaluation_score: string,
+  annotations: string
+}
+
+interface CandidatoCliente {
+  name: string,
+  vacant: string,
+  call_date: string,
+  call_time: string,
+  appointment_date: string,
+  appointment_time: string,
+  evaluation_score: string,
+  annotations: string
+}
+
+export default Vue.extend({
   data() {
     return {
       nuevoCandidato: {},
       headers: [
         {
           text: 'Nombre',
-          value: 'nombre'
+          value: 'name'
         },
         {
-          text: 'Teléfono',
-          value: 'telefono'
+          text: 'Vacante',
+          value: 'vacant'
         },
         {
-          text: 'Comentarios',
-          value: 'comentarios'
+          text: 'Fecha de llamada',
+          value: 'call_date'
+        },
+        {
+          text: 'Hora de llamada',
+          value: 'call_time'
+        },
+        {
+          text: 'Fecha de cita',
+          value: 'appointment_date'
+        },
+        {
+          text: 'Hora de cita',
+          value: 'appointment_time'
+        },
+        {
+          text: 'Puntaje de evaluación',
+          value: 'evaluation_score'
+        },
+        {
+          text: 'Anotaciones',
+          value: 'annotations'
         }
       ],
-      candidatos: [],
+      candidatos: [] as any,
       dialogNuevo: false
     }
   },
@@ -66,8 +101,20 @@ export default {
 
     },
     async getCandidates() {
-      console.log((await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data()))
+      let candidatos = (await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data())
+      console.log( this.candidatos.map( (candidato: any) => {
+        return {
+          name: candidato.name,
+          vacant: candidato.vacant,
+          call_date: this.$moment(candidato.call_datetime).format('LL'),
+          call_time: this.$moment(candidato.call_datetime).format('h:mm A'),
+          appointment_date: this.$moment(candidato.appointment_datetime).format('LL'),
+          appointment_time: this.$moment(candidato.appointment_datetime).format('h:mm A'),
+          evaluation_score: candidato.evaluation_score,
+          annotations: candidato.annotations
+        }
+      }))
     }
-  }
-}
+  }  
+})
 </script>

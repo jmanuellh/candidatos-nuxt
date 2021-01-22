@@ -20,6 +20,7 @@
   "devDependencies": {
     "@nuxt/types": "^2.14.12",
     "@nuxt/typescript-build": "^2.0.4",
+    "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/vuetify": "^1.11.2",
     "pug": "^3.0.0",
     "pug-plain-loader": "^1.1.0"
