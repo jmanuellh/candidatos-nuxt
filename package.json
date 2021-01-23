@@ -15,7 +15,8 @@
     "@nuxtjs/pwa": "^3.3.4",
     "core-js": "^3.8.2",
     "firebase": "^8.2.3",
-    "nuxt": "^2.14.12"
+    "nuxt": "^2.14.12",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.12",
