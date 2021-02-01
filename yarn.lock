@@ -1560,10 +1560,10 @@
     consola "^2.15.0"
     defu "^3.2.2"
 
-"@nuxtjs/firebase@^7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/firebase/-/firebase-7.4.0.tgz#3bce0801a4271b936f93b942eff6a01df908bc54"
-  integrity sha512-ihy8MVtqrVN/b/2y6HNF8rIxQiel1mz+Sv9yO67OZHcmSj/cbTwPBHYBj0XPgg4jn8yTAQCMGg2V3VbGUltKGg==
+"@nuxtjs/firebase@^7.4.1":
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/firebase/-/firebase-7.4.1.tgz#b654ab7a022d43da9e9f492eb142728cfa3fe61f"
+  integrity sha512-u8H+0uRYQYDIG9XX6CTvz7lynB58kBjmBfrwgVpGZPqjMI+u/XvKTq9RZWGp5c3P1142UpIluWiVBUrESNmT6g==
   dependencies:
     consola "^2.15.0"
   optionalDependencies:
