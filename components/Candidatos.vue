@@ -44,9 +44,9 @@ import XLSX from 'xlsx'
 interface Candidato {
   name: string,
   vacant: string,
-  call_datetime: string,
-  appointment_datetime: string,
-  evaluation_score: number,
+  call_datetime: number,
+  appointment_datetime: number,
+  evaluation_score: string,
   annotations: string
 }
 
@@ -57,8 +57,19 @@ interface CandidatoCliente {
   call_time: string,
   appointment_date: string,
   appointment_time: string,
-  evaluation_score: number,
+  evaluation_score: string,
   annotations: string
+}
+
+interface CandidatoExcel {
+  "Nombre": string,
+  "Vacante": string,
+  "Fecha de llamada": string,
+  "Hora de llamada": string,
+  "Fecha de la cita": string,
+  "Hora de la cita": string,
+  "Puntaje evaluacion": string,
+  "Anotaciones": string
 }
 
 export default Vue.extend({
@@ -99,7 +110,7 @@ export default Vue.extend({
           value: 'annotations'
         }
       ],
-      candidatos: [] as any[],
+      candidatos: [] as CandidatoCliente[],
       dialogNuevo: false
     }
   },
@@ -111,7 +122,7 @@ export default Vue.extend({
 
     },
     async getCandidates() {
-      let candidatos = (await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data())
+      let candidatos = (await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data()) as Candidato[]
       this.candidatos =  candidatos.map( candidato => {
         return {
           name: candidato.name,
@@ -132,8 +143,7 @@ export default Vue.extend({
         reader.onloadend = () => {
           const workbook = XLSX.read(reader.result, {type: 'array'})
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          const candidatos = XLSX.utils.sheet_to_json(worksheet) as Candidato[]
-          
+          const candidatos: any[] = XLSX.utils.sheet_to_json(worksheet, {raw: false}) as CandidatoExcel[]
           this.bulkCandidatos(candidatos)
         }
         reader.readAsArrayBuffer(archivo)
@@ -142,11 +152,18 @@ export default Vue.extend({
       }
 
     },
-    bulkCandidatos(candidatos: Candidato[]) {
+    bulkCandidatos(candidatos: CandidatoExcel[]) {
       let batch = this.$fire.firestore.batch()
       candidatos.forEach(candidato => {
         const ref = this.$fire.firestore.collection("candidatos_gibran").doc()
-        batch.set(ref, candidato)
+        batch.set(ref, {
+          name: candidato['Nombre'],
+          vacant: candidato['Vacante'],
+          call_datetime: this.$moment(candidato['Fecha de llamada'] + " " + candidato['Hora de llamada'], "L hh:mm a").unix(),
+          appointment_datetime: this.$moment(candidato['Fecha de la cita'] + " " + candidato['Hora de la cita'], "L hh:mm a").unix(),
+          evaluation_score: candidato['Puntaje evaluacion'],
+          annotations: candidato['Anotaciones']
+        } as Candidato)
       })
       batch.commit().then(() => {
         this.getCandidates()
