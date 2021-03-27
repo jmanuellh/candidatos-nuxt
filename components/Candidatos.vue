@@ -1,5 +1,6 @@
 <template lang="pug">
 div
+  div {{ stateDialogNuevo }}
   v-row
     v-col
       h1 Candidatos
@@ -18,21 +19,22 @@ div
       v-toolbar( flat )
         v-toolbar-title Candidatos
         v-spacer
-        v-dialog( v-model="dialogNuevo" max-width="500px" )
+        v-dialog( v-model="dialogNuevo" max-width="500px")
           template( v-slot:activator="{on, attrs}" )
-            v-btn(@click="agregarCandidato()" color="primary" v-bind="attrs" v-on="on") Nuevo
+            v-btn(color="primary" v-bind="attrs" v-on="on") Nuevo
           v-card
             v-card-text
               v-container
                 v-row
                   v-col(class="d-flex flex-column")
-                    v-text-field(v-model="nuevoCandidato.nombre" label ="Nombre")
-                    v-text-field(v-model.number="nuevoCandidato.telefono" label="Número" type="number" )
-                    v-text-field(v-model="nuevoCandidato.comentarios" label="Comentarios")
+                    v-text-field(v-model="nuevoCandidato.name" label ="Nombre" :autofocus="true")
+                    v-text-field(v-model.number="nuevoCandidato.vacant" label="Vacante")
+                    v-text-field(v-model="temporalNuevoCandidato.call_date" label="Fecha de llamada" type="date")
+                    v-text-field(v-model="temporalNuevoCandidato.call_time" label="Hora de llamada" type="time")
             v-card-actions
               v-spacer
               v-btn(@click="() => dialogNuevo = false" color="primary") Cerrar
-              v-btn(@click="() => dialogNuevo = false" color="primary") Agregar
+              v-btn(@click="addCandidate()" color="primary") Agregar
     template(v-slot:item.acciones="{ item }")
       v-btn(@click="eliminar" color="primary")
 </template>
@@ -76,6 +78,7 @@ export default Vue.extend({
   data() {
     return {
       nuevoCandidato: {},
+      temporalNuevoCandidato: {},
       headers: [
         {
           text: 'Nombre',
@@ -116,25 +119,44 @@ export default Vue.extend({
   },
   mounted() {
     this.getCandidates()
+    this.cargarAccesosRapidos()
+  },
+  computed: {
+    stateDialogNuevo() {
+      if (this.dialogNuevo == false) {
+        this.closeDialogNuevo()
+      }
+      return this.dialogNuevo
+    }
   },
   methods: {
-    agregarCandidato() {
-
+    closeDialogNuevo() {
+      this.clearDialogNuevo()
     },
-    async getCandidates() {
-      let candidatos = (await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data()) as Candidato[]
-      this.candidatos =  candidatos.map( candidato => {
-        return {
-          name: candidato.name,
-          vacant: candidato.vacant,
-          call_date: this.$moment.unix(candidato.call_datetime).format('LL'),
-          call_time: this.$moment.unix(candidato.call_datetime).format('h:mm A'),
-          appointment_date: this.$moment.unix(candidato.appointment_datetime).format('LL'),
-          appointment_time: this.$moment.unix(candidato.appointment_datetime).format('h:mm A'),
-          evaluation_score: candidato.evaluation_score,
-          annotations: candidato.annotations
+    cargarAccesosRapidos() {
+      addEventListener("keyup", e => {
+        if (e.code == "KeyN") {
+          this.dialogNuevo = true
         }
       })
+    },
+    addCandidate() {
+      console.log(this.temporalNuevoCandidato)
+    },
+    async getCandidates() {
+      // let candidatos = (await this.$fire.firestore.collection('candidatos_gibran').get()).docs.map(doc => doc.data()) as Candidato[]
+      // this.candidatos =  candidatos.map( candidato => {
+      //   return {
+      //     name: candidato.name,
+      //     vacant: candidato.vacant,
+      //     call_date: this.$moment.unix(candidato.call_datetime).format('LL'),
+      //     call_time: this.$moment.unix(candidato.call_datetime).format('h:mm A'),
+      //     appointment_date: this.$moment.unix(candidato.appointment_datetime).format('LL'),
+      //     appointment_time: this.$moment.unix(candidato.appointment_datetime).format('h:mm A'),
+      //     evaluation_score: candidato.evaluation_score,
+      //     annotations: candidato.annotations
+      //   }
+      // })
     },
     importarExcelCandidatos(archivo: Blob) {
       if(archivo) {
@@ -173,6 +195,10 @@ export default Vue.extend({
     clearInputExcel() {
       let inputExcel = document.getElementById("input-excel-candidatos") as HTMLInputElement
       (<HTMLInputElement>inputExcel).value = ""
+    },
+    clearDialogNuevo() {
+      this.nuevoCandidato = {},
+      this.temporalNuevoCandidato = {}
     }
   }  
 })
