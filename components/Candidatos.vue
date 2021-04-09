@@ -1,42 +1,42 @@
 <template lang="pug">
-div
-  div {{ stateDialogNuevo }}
-  v-row
-    v-col
-      h1 Candidatos
-    v-col
-      v-file-input(
-        id="input-excel-candidatos"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        @change="importarExcelCandidatos"
-        label="Subir archivo de excel"
-      )
-  v-data-table(
-    :headers="headers"
-    :items="candidatos"
-  )
-    template( v-slot:top )
-      v-toolbar( flat )
-        v-toolbar-title Candidatos
-        v-spacer
-        v-dialog( v-model="dialogNuevo" max-width="500px")
-          template( v-slot:activator="{on, attrs}" )
-            v-btn(color="primary" v-bind="attrs" v-on="on") Nuevo
-          v-card
-            v-card-text
-              v-container
-                v-row
-                  v-col(class="d-flex flex-column")
-                    v-text-field(v-model="nuevoCandidato.name" label ="Nombre" :autofocus="true")
-                    v-text-field(v-model.number="nuevoCandidato.vacant" label="Vacante")
-                    v-text-field(v-model="temporalNuevoCandidato.call_date" label="Fecha de llamada" type="date")
-                    v-text-field(v-model="temporalNuevoCandidato.call_time" label="Hora de llamada" type="time")
-            v-card-actions
-              v-spacer
-              v-btn(@click="() => dialogNuevo = false" color="primary") Cerrar
-              v-btn(@click="addCandidate()" color="primary") Agregar
-    template(v-slot:item.acciones="{ item }")
-      v-btn(@click="eliminar" color="primary")
+  div
+    div {{ stateDialogNuevo }}
+    v-row
+      v-col
+        h1 Candidatos
+      v-col
+        v-file-input(
+          id="input-excel-candidatos"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          @change="importarExcelCandidatos"
+          label="Subir archivo de excel"
+        )
+    v-data-table(
+      :headers="headers"
+      :items="candidatos"
+    )
+      template( v-slot:top )
+        v-toolbar( flat )
+          v-toolbar-title Candidatos
+          v-spacer
+          v-dialog( v-model="dialogNuevo" max-width="500px")
+            template( v-slot:activator="{on, attrs}" )
+              v-btn(color="primary" v-bind="attrs" v-on="on" ) Nuevo
+            v-card
+              v-card-text
+                v-container
+                  v-row
+                    v-col(class="d-flex flex-column")
+                      v-text-field(v-model="nuevoCandidato.name" label="Nombre" autofocus)
+                      v-text-field(v-model.number="nuevoCandidato.vacant" label="Vacante")
+                      v-text-field(v-model="temporalNuevoCandidato.call_date" label="Fecha de llamada" type="date")
+                      v-text-field(v-model="temporalNuevoCandidato.call_time" label="Hora de llamada" type="time")
+              v-card-actions
+                v-spacer
+                v-btn(@click="() => dialogNuevo = false" color="primary") Cerrar
+                v-btn(@click="addCandidate()" color="primary") Agregar
+      template(v-slot:item.acciones="{ item }")
+        v-btn(@click="eliminar" color="primary")
 </template>
 
 <script lang="ts">
@@ -122,7 +122,7 @@ export default Vue.extend({
     this.cargarAccesosRapidos()
   },
   computed: {
-    stateDialogNuevo() {
+    stateDialogNuevo(): boolean {
       if (this.dialogNuevo == false) {
         this.closeDialogNuevo()
       }
